@@ -1,27 +1,21 @@
 import logger from "../utils/logger.js";
-import fs from "fs";
+import { annotateImage } from "./vision.js";
 
-const ML_URL = process.env.ML_SERVICE_URL ?? "http://ml:5000";
-
-export const runCaptioning = async (filePath) => {
+export const runCaptioning = async (localPath) => {
   logger.info("[caption] starting");
 
-  const formData = new FormData();
-  const blob = new Blob([fs.readFileSync(filePath)]);
-  formData.append("image", blob, "image.png");
+  const responseData = await annotateImage(localPath);
+  const annotations = responseData.labelAnnotations ?? [];
 
-  const response = await fetch(`${ML_URL}/caption`, {
-    method: "POST",
-    body: formData,
-  });
+  const labels = annotations
+    .slice(0, 3)
+    .map((item) => item.description?.toLowerCase())
+    .filter(Boolean);
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`ML caption error ${response.status}: ${text}`);
-  }
+  const caption = labels.length
+    ? `an image of ${labels.join(", ")}`
+    : "unknown image";
 
-  const data = await response.json();
-  logger.info(`[caption] result: "${data.caption}"`);
-  return data.caption;
+  logger.info(`[caption] result: "${caption}"`);
+  return caption;
 };
-
