@@ -1,9 +1,6 @@
-import logger from "../utils/logger.js";
 import { annotateImage } from "./vision.js";
 
 export const runCaptioning = async (localPath) => {
-  logger.info("[caption] starting");
-
   const responseData = await annotateImage(localPath);
   const annotations = responseData.labelAnnotations ?? [];
 
@@ -16,6 +13,5 @@ export const runCaptioning = async (localPath) => {
     ? `an image of ${labels.join(", ")}`
     : "unknown image";
 
-  logger.info(`[caption] result: "${caption}"`);
   return caption;
 };

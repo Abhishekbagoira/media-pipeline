@@ -4,7 +4,7 @@ const GOOGLE_VISION_API_KEY = process.env.GOOGLE_VISION_API_KEY;
 const VISION_URL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_VISION_API_KEY}`;
 
 if (!GOOGLE_VISION_API_KEY) {
-  throw new Error("GOOGLE_VISION_API_KEY is required in worker env");
+  throw new Error("GOOGLE_VISION_API_KEY is required");
 }
 
 export async function annotateImage(localPath) {
