@@ -1,0 +1,71 @@
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+export default function Signup() {
+  const { signup } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      await signup(email, password);
+      navigate("/jobs");
+    } catch {
+      setError("Signup failed. Try a different email.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 w-full max-w-sm">
+        <h1 className="text-xl font-semibold mb-1">Create account</h1>
+        <p className="text-sm text-gray-400 mb-6">
+          Start analyzing images today
+        </p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="text-xs font-medium text-gray-500 block mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 block mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+              placeholder="••••••••"
+            />
+          </div>
+          {error && <p className="text-xs text-red-500">{error}</p>}
+          <button className="bg-purple-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-purple-700 transition">
+            Create account
+          </button>
+        </form>
+        <p className="text-center text-xs text-gray-400 mt-4">
+          Already have one?{" "}
+          <Link to="/login" className="text-purple-600">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
